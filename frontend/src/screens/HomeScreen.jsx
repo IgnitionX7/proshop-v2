@@ -8,9 +8,9 @@ import { useGetProductsQuery } from "../slices/productsApiSlice";
 
 const HomeScreen = () => {
   const { data: products, isLoading, error } = useGetProductsQuery();
-  {
-    /* we can inspect the object that is returned from useGetProductsQuery() and see all property names using following code*/
-  }
+
+  /* we can inspect the object that is returned from useGetProductsQuery() and see all property names using following code*/
+
   // const queryResult = useGetProductsQuery();
   // console.log(queryResult);
 
