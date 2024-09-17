@@ -22,8 +22,12 @@ const cartSlice = createSlice({
       }
       return updateCart(state);
     },
+    removeFromCart: (state, action) => {
+      state.cartItems = state.cartItems.filter((x) => x._id !== action.payload);
+      return updateCart(state);
+    },
   },
 });
 
-export const { addToCart } = cartSlice.actions; // we are not exporting the reducer we created but the actioncreator that was automatically created by reductoolkit from our reducer addToCart
+export const { addToCart, removeFromCart } = cartSlice.actions; // we are not exporting the reducer we created but the actioncreator that was automatically created by reductoolkit from our reducer addToCart
 export default cartSlice.reducer;
