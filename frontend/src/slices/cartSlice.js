@@ -34,6 +34,10 @@ const cartSlice = createSlice({
       state.paymentMethod = action.payload;
       return updateCart(state);
     },
+    clearCartItems: (state, action) => {
+      state.cartItems = [];
+      return updateCart(state);
+    },
   },
 });
 
@@ -42,5 +46,6 @@ export const {
   removeFromCart,
   saveShippingAddress,
   savePaymentMethod,
+  clearCartItems,
 } = cartSlice.actions; // we are not exporting the reducer we created but the actioncreator that was automatically created by reductoolkit from our reducer addToCart
 export default cartSlice.reducer;
