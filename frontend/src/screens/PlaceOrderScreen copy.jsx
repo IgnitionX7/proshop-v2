@@ -1,17 +1,24 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useSelector, useDispatch } from "react-redux";
 import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import Message from "../components/Message";
+import { toast } from "react-toastify";
 import CheckoutSteps from "../components/CheckoutSteps";
+import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { useCreateOrderMutation } from "../slices/orderApiSlice";
+import { useCreateOrderMutation } from "../slices/ordersApiSlice";
 import { clearCartItems } from "../slices/cartSlice";
+
 const PlaceOrderScreen = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const cart = useSelector((state) => state.cart);
+
   const [createOrder, { isLoading, error }] = useCreateOrderMutation();
+  console.log(error);
+
   useEffect(() => {
     if (!cart.shippingAddress.address) {
       navigate("/shipping");
@@ -19,7 +26,7 @@ const PlaceOrderScreen = () => {
       navigate("/payment");
     }
   }, [cart.paymentMethod, cart.shippingAddress.address, navigate]);
-  const dispatch = useDispatch();
+
   const placeOrderHandler = async () => {
     try {
       const res = await createOrder({
@@ -33,10 +40,11 @@ const PlaceOrderScreen = () => {
       }).unwrap();
       dispatch(clearCartItems());
       navigate(`/order/${res._id}`);
-    } catch (err) {
-      toast.error(err);
+    } catch (error) {
+      toast.error(error);
     }
   };
+
   return (
     <>
       <CheckoutSteps step1 step2 step3 step4 />
@@ -46,16 +54,14 @@ const PlaceOrderScreen = () => {
             <ListGroup.Item>
               <h2>Shipping</h2>
               <p>
-                <strong>Address:</strong>
-                {cart.shippingAddress.address}, {cart.shippingAddress.city}{" "}
-                {cart.shippingAddress.postalCode},{" "}
+                <strong>Address:</strong> {cart.shippingAddress.address},{" "}
+                {cart.shippingAddress.city}, {cart.shippingAddress.postalCode},{" "}
                 {cart.shippingAddress.country}
               </p>
             </ListGroup.Item>
             <ListGroup.Item>
               <h2>Payment Method</h2>
-              <strong>Method: </strong>
-              {cart.paymentMethod}
+              <strong>Method:</strong> {cart.paymentMethod}
             </ListGroup.Item>
             <ListGroup.Item>
               <h2>Order Items</h2>
@@ -75,7 +81,7 @@ const PlaceOrderScreen = () => {
                           />
                         </Col>
                         <Col>
-                          <Link to={`/product/${item.product}`}>
+                          <Link to={`/products/${item.product}`}>
                             {item.name}
                           </Link>
                         </Col>
@@ -98,25 +104,25 @@ const PlaceOrderScreen = () => {
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
-                  <Col>Items</Col>
+                  <Col>Items:</Col>
                   <Col>${cart.itemsPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
-                  <Col>Shipping</Col>
+                  <Col>Shipping:</Col>
                   <Col>${cart.shippingPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
-                  <Col>Tax</Col>
+                  <Col>Tax:</Col>
                   <Col>${cart.taxPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
-                  <Col>Total</Col>
+                  <Col>Total:</Col>
                   <Col>${cart.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
@@ -129,7 +135,7 @@ const PlaceOrderScreen = () => {
                 <Button
                   type="button"
                   className="btn-block"
-                  disabled={cart.cartItems === 0}
+                  disabled={cart.cartItems.length === 0}
                   onClick={placeOrderHandler}
                 >
                   Place Order
@@ -143,4 +149,5 @@ const PlaceOrderScreen = () => {
     </>
   );
 };
+
 export default PlaceOrderScreen;
